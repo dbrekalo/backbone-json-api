@@ -1,6 +1,6 @@
 {
   "name": "backbone-json-api",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Backbone Model and Collection extensions for working with json:api formatted datasets and server responses",
   "main": "src/index.js",
   "license": "MIT",
