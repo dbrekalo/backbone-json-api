@@ -17,7 +17,7 @@
 
         modelId: function(attributes) {
 
-            return attributes.type + '@' + attributes.id;
+            return attributes._type + '@' + attributes.id;
 
         },
 
@@ -54,8 +54,8 @@
                 this.apiData.data.type = this.type;
             }
 
-            if (attributes.type) {
-                this.apiData.data.type = attributes.type;
+            if (attributes._type) {
+                this.apiData.data.type = attributes._type;
             }
 
             var initalizeRef = this.initialize;
@@ -116,9 +116,15 @@
 
                 result = this.getRelation(currentQuery);
 
-                if (typeof result !== 'undefined' && queryTree.length > 1) {
-                    queryTree.shift();
-                    return result.get(queryTree);
+                if (typeof result !== 'undefined') {
+
+                    if (queryTree.length === 2 && result instanceof EntityCollection) {
+                        return result.pluck(queryTree[1]);
+                    } else if (queryTree.length > 1) {
+                        queryTree.shift();
+                        return result.get(queryTree);
+                    }
+
                 }
 
             } else {
@@ -276,6 +282,8 @@
             var attributesSubset = this.persistedAttributes || options.persistedAttributes;
             var attributes = attributesSubset ? _.pick(this.attributes, attributesSubset) : this.attributes;
 
+            attributes = _.omit(attributes, ['id', '_type']);
+
             if (!_.isEmpty(attributes)) {
                 data.attributes = attributes;
             }
@@ -341,7 +349,7 @@
             }
 
             if (response.data.type) {
-                attributes.type = response.data.type;
+                attributes._type = response.data.type;
             }
 
             delete this.includedCollection;
@@ -355,7 +363,7 @@
 
         apiUrl: function(resourceName, resourceId) {
 
-            return '/api/' + resourceName + '/' + resourceId;
+            return '/api/' + resourceName + (resourceId ? '/' + resourceId : '');
 
         },
 
@@ -370,12 +378,19 @@
             options = _.extend({resourceName: this.type}, options);
 
             var Model = this;
-            var url = options.url || Model.apiUrl(options.resourceName || Model.getType(), options.id);
+            var resourceName = options.resourceName || options.type || Model.getType();
+            var url = options.url || Model.apiUrl(resourceName, options.id);
+            var deferred = $.Deferred();
 
-            return $.get(url, function(apiData) {
+            $.get(url, function(apiData) {
                 var model = Model.createFromData(apiData);
                 callback && callback.call(callbackContext || this, model, apiData);
+                deferred.resolve(model);
+            }).fail(function(data) {
+                deferred.reject(data);
             });
+
+            return deferred;
 
         },
 
@@ -392,7 +407,7 @@
             }
 
             if (apiData.data.type) {
-                attributes.type = apiData.data.type;
+                attributes._type = apiData.data.type;
             }
 
             return new Model(attributes, options, function(model) {
@@ -420,7 +435,7 @@
 
         fetch: function() {
 
-            return EntityCollection.getFromApi({url: this.url}, function(collection) {
+            return EntityCollection.getFromApi({url: this.url || this.apiUrl}, function(collection) {
                 this.set(collection.models);
             }, this);
 
@@ -436,15 +451,24 @@
 
         getFromApi: function(options, callback, callbackContext) {
 
-            options = options || {};
+            if (typeof options === 'string') {
+                options = {resourceName: options};
+            }
 
             var Collection = this;
-            var url = options.url || Collection.apiUrl(options.resourceName, options);
+            var url = options.url || Collection.apiUrl(options.resourceName || options.type, options);
+            var deferred = $.Deferred();
 
-            return $.get(url, function(apiData) {
+            $.get(url, function(apiData) {
                 var collection = Collection.createFromData(apiData, options);
+                collection.apiUrl = url;
                 callback && callback.call(callbackContext || this, collection, apiData);
+                deferred.resolve(collection);
+            }).fail(function(data) {
+                deferred.reject(data);
             });
+
+            return deferred;
 
         },
 

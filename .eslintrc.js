@@ -25,7 +25,7 @@ module.exports = {
         'key-spacing': 'error',
         'keyword-spacing': 'error',
         'max-depth': ['error', 4],
-        'max-nested-callbacks': ['error', 3],
+        'max-nested-callbacks': ['error', 4],
         'new-cap': ['error', {'capIsNew': false}],
         'no-multiple-empty-lines': ['error', {'max': 1}],
         'no-extra-bind': 'error',
