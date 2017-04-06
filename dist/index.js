@@ -277,7 +277,7 @@
 
         prepareSyncData: function(options) {
 
-            var data = $.extend(true, {}, _.pick(this.apiData.data, ['type', 'id']));
+            var data = _.extend({}, _.pick(this.apiData.data, ['type', 'id']));
 
             var attributesSubset = this.persistedAttributes || options.persistedAttributes;
             var attributes = attributesSubset ? _.pick(this.attributes, attributesSubset) : this.attributes;
