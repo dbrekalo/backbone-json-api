@@ -343,7 +343,7 @@
 
                 var dataToSync = this.prepareSyncData(options);
 
-                if (dataToSync.files) {
+                if (dataToSync.files && !_.isEmpty(dataToSync.files)) {
 
                     var formData = new FormData();
 
