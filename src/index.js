@@ -312,7 +312,7 @@
                 data.relationships = relations;
             }
 
-            if (options.files) {
+            if (options.files && !_.isEmpty(options.files)) {
                 data.files = options.files;
             }
 
@@ -343,7 +343,7 @@
 
                 var dataToSync = this.prepareSyncData(options);
 
-                if (dataToSync.files && !_.isEmpty(dataToSync.files)) {
+                if (dataToSync.files) {
 
                     var formData = new FormData();
 
