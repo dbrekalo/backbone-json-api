@@ -316,6 +316,66 @@ describe('Saving json api model', function() {
 
     });
 
+    it('saves files payload', function(done) {
+
+        Model.getFromApi({type: 'article', id: 1}, function(model) {
+
+            var handler = function(request) {
+                assert.strictEqual(request.requestBody.get('test'), 'somefile.jpg');
+                fakeServer.off('request', handler);
+                done();
+            };
+
+            fakeServer.on('request', handler);
+
+            model.saveFile({test: 'somefile.jpg'});
+
+        });
+
+    });
+
+    it('saves files payload with altenate syntax', function(done) {
+
+        Model.getFromApi({type: 'article', id: 1}, function(model) {
+
+            var handler = function(request) {
+                assert.strictEqual(request.requestBody.get('test'), 'somefile.jpg');
+                fakeServer.off('request', handler);
+                done();
+            };
+
+            fakeServer.on('request', handler);
+
+            model.saveFile('test', 'somefile.jpg');
+
+        });
+
+    });
+
+    it('saves files payload alongside attributes', function(done) {
+
+        Model.getFromApi({type: 'article', id: 1}, function(model) {
+
+            var handler = function(request) {
+                assert.strictEqual(request.requestBody.get('test'), 'somefile.jpg');
+                fakeServer.off('request', handler);
+            };
+
+            fakeServer.on('request', handler);
+
+            model.saveOnly({
+                attributes: {title: 'New article title'},
+                files: {test: 'somefile.jpg'},
+                afterSave: function(savedModel) {
+                    assert.equal(model.get('title'), 'New article title');
+                    done();
+                }
+            });
+
+        });
+
+    });
+
 });
 
 describe('Creating collections from server data', function() {

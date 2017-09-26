@@ -225,6 +225,10 @@
                 this.setRelation(data.relations);
             }
 
+            if (data.files) {
+                options.files = data.files;
+            }
+
             deferred = this.save(_.isArray(data.attributes) ? null : data.attributes, options);
 
             data.afterSave && deferred.done(function() {
@@ -240,6 +244,19 @@
             typeof value !== 'undefined' && this.set(name, value);
 
             return this.saveOnly({attributes: [name]});
+
+        },
+
+        saveFile: function(name, file) {
+
+            if (typeof file !== 'undefined') {
+                var filesData = {};
+                filesData[name] = file;
+            } else {
+                filesData = name;
+            }
+
+            return this.saveOnly({files: filesData});
 
         },
 
@@ -295,6 +312,10 @@
                 data.relationships = relations;
             }
 
+            if (options.files) {
+                data.files = options.files;
+            }
+
             return data;
 
         },
@@ -313,15 +334,38 @@
             var params = {
                 type: methodMap[method],
                 dataType: 'json',
-                url: _.result(model, 'url')
+                url: _.result(model, 'url'),
+                processData: false
             };
 
             // Ensure that we have the appropriate request data.
             if (!options.data && model && (method === 'create' || method === 'update' || method === 'patch')) {
-                _.extend(params, {
-                    contentType: 'application/vnd.api+json',
-                    data: JSON.stringify({data: this.prepareSyncData(options)})
-                });
+
+                var dataToSync = this.prepareSyncData(options);
+
+                if (dataToSync.files) {
+
+                    var formData = new FormData();
+
+                    formData.append('data', JSON.stringify(_.omit(dataToSync, 'files')));
+
+                    _.each(dataToSync.files, function(file, fileName) {
+                        formData.append(fileName, file);
+                    });
+
+                    _.extend(params, {
+                        contentType: false,
+                        data: formData
+                    });
+
+                } else {
+
+                    _.extend(params, {
+                        contentType: 'application/vnd.api+json',
+                        data: JSON.stringify({data: dataToSync})
+                    });
+
+                }
             }
 
             // Make the request, allowing the user to override any Ajax options.

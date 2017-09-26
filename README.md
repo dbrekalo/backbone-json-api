@@ -13,7 +13,7 @@ If you are new to JSON api we recommend you browse [json api website](http://jso
 This library is built upon standards and conventions of JSON api and provides a simple way to traverse and retrieve all those attributes and relations.
 
 ## Examples and api
-Examples coming soon
+[Browse tests](https://github.com/dbrekalo/backbone-json-api/blob/master/test/index.js) to examine library api and usage.
 
 ## Installation
 Backbone json api is packaged as UMD library so you can use it in CommonJS and AMD environment or with browser globals.
