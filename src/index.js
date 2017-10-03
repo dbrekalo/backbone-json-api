@@ -354,6 +354,7 @@
                     });
 
                     _.extend(params, {
+                        type: 'POST',
                         contentType: false,
                         data: formData
                     });
