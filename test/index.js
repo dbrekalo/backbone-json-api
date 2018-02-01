@@ -2,9 +2,9 @@ var assert = require('chai').assert;
 var $ = require('jquery');
 var FakeServer = require('fake-json-api-server');
 var fakeServerConfig = require('./fakeServerConfig');
-var backboneJsonApi = require('../');
-var Model = backboneJsonApi.Model;
-var Collection = backboneJsonApi.Collection;
+var jsonApiResource = require('../');
+var Model = jsonApiResource.Model;
+var Collection = jsonApiResource.Collection;
 
 var apiUrl = window.location.href + '/api';
 var fakeServer;
@@ -122,6 +122,19 @@ describe('Creating models from server data', function() {
         });
 
     });
+
+    it('model properly unsets id attribute', function(done) {
+
+        Model.getFromApi({type: 'article', id: 1}, function(model) {
+
+            model.unset('id');
+            assert.isTrue(model.isNew());
+            done();
+
+        });
+
+    });
+
 
     it('fails when api fails', function(done) {
 
