@@ -12,7 +12,7 @@
     "watch": "grunt build && grunt watch",
     "build": "grunt build",
     "watch:test": "node ./node_modules/karma/bin/karma start --browsers ChromeHeadless",
-    "test": "node ./node_modules/karma/bin/karma start --single-run --browsers ChromeHeadless",
+    "test": "node ./node_modules/karma/bin/karma start --single-run --browsers ChromeHeadlessNoSandbox",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "bump:patch": "grunt bump:patch",
     "bump:minor": "grunt bump:minor",
