@@ -135,7 +135,6 @@ describe('Creating models from server data', function() {
 
     });
 
-
     it('fails when api fails', function(done) {
 
         Model.getFromApi({resourceName: 'undefinedResource', id: 1}).fail(function() {

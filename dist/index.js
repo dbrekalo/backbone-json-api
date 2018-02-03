@@ -82,6 +82,16 @@
 
         },
 
+        unset: function(key) {
+
+            if (key === 'id') {
+                delete this.apiData.data.id;
+            }
+
+            return Backbone.Model.prototype.unset.apply(this, arguments);
+
+        },
+
         buildIncludedCollection: function() {
 
             if (!this.includedCollection) {
