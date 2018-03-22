@@ -69,6 +69,8 @@
 
         },
 
+        http: $,
+
         getType: function() {
 
             return this.apiData.data.type;
@@ -380,7 +382,7 @@
             }
 
             // Make the request, allowing the user to override any Ajax options.
-            var xhr = options.xhr = $.ajax(_.extend(params, options));
+            var xhr = options.xhr = this.http.ajax(_.extend(params, options));
             model.trigger('request', model, xhr, options);
 
             return xhr;
@@ -433,11 +435,12 @@
             options = _.extend({resourceName: this.type}, options);
 
             var Model = this;
+            var http = Model.prototype.http;
             var resourceName = options.resourceName || options.type || Model.getType();
             var url = options.url || Model.apiUrl(resourceName, options.id);
             var deferred = $.Deferred();
 
-            $.get(url, function(apiData) {
+            http.get(url, function(apiData) {
                 var model = Model.createFromData(apiData);
                 callback && callback.call(callbackContext || this, model, apiData);
                 deferred.resolve(model);
@@ -494,7 +497,9 @@
                 this.set(collection.models);
             }, this);
 
-        }
+        },
+
+        http: $
 
     }, {
 
@@ -511,10 +516,11 @@
             }
 
             var Collection = this;
+            var http = Collection.prototype.http;
             var url = options.url || Collection.apiUrl(options.resourceName || options.type, options);
             var deferred = $.Deferred();
 
-            $.get(url, function(apiData) {
+            http.get(url, function(apiData) {
                 var collection = Collection.createFromData(apiData, options);
                 collection.apiUrl = url;
                 callback && callback.call(callbackContext || this, collection, apiData);
