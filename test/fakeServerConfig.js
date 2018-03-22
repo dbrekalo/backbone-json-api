@@ -1,7 +1,7 @@
 var _ = require('underscore');
 
 module.exports = {
-    baseApiUrl: window.location.href + '/api',
+    baseApiUrl: window.location.href + '/api/',
     storageKey: undefined,
     resources: {
         article: {
