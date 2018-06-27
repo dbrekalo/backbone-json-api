@@ -206,15 +206,15 @@
 
                 if (data instanceof EntityModel) {
 
-                    data = {'type': data.getType(), 'id': data.get('id')};
                     this.includedCollection.add(data, {merge: true});
+                    data = {'type': data.getType(), 'id': data.get('id')};
 
                 } else if (data instanceof EntityCollection) {
 
+                    this.includedCollection.add(data.models, {merge: true});
                     data = data.map(function(model) {
                         return {'type': model.getType(), 'id': model.get('id')};
                     });
-                    this.includedCollection.add(data.models, {merge: true});
 
                 }
 
